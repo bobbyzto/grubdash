@@ -6,6 +6,8 @@ const dishes = require(path.resolve("src/data/dishes-data"));
 // Use this function to assign ID's when necessary
 const nextId = require("../utils/nextId");
 
+// ROUTE HANDLERS
+
 // List all dishes in database
 function list(req, res) {
   res.json({ data: dishes });
@@ -42,6 +44,8 @@ function update(req, res) {
 
   res.json({ data: foundDish });
 }
+
+// Request validation middleware
 
 // Check that dish requested in URL exists in the database
 const dishExists = (req, res, next) => {

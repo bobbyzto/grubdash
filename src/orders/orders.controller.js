@@ -6,6 +6,57 @@ const orders = require(path.resolve("src/data/orders-data"));
 // Use this function to assigh ID's when necessary
 const nextId = require("../utils/nextId");
 
+// ROUTE HANDLERS
+
+// handler for listing the all of the orders
+function list(req, res) {
+  res.json({ data: orders });
+}
+
+// handler for reading the orders
+function read(req, res) {
+  const orderId = req.params.orderId;
+  const matchingOrder = orders.find((order) => order.id === orderId);
+  res.json({ data: matchingOrder });
+}
+
+// handler for making a new order
+function create(req, res) {
+//   const { data: { deliverTo, mobileNumber, dishes } = {} } = req.body;
+  const newOrder = {
+    id: nextId(),
+    deliverTo: res.locals.deliverTo,
+    mobileNumber: res.locals.mobileNumber,
+    status: "out-for-delivery",
+    dishes: res.locals.dishes,
+  };
+  orders.push(newOrder);
+  res.status(201).json({ data: newOrder });
+}
+
+// handler for updating an order
+function update(req, res) {
+  const { data: { deliverTo, mobileNumber, dishes } = {} } = req.body;
+  const orderId = req.params.orderId;
+  const foundOrder = orders.find((order) => order.id === orderId);
+
+  foundOrder.deliverTo = deliverTo;
+  foundOrder.mobileNumber = mobileNumber;
+  foundOrder.dishes = dishes;
+
+  res.json({ data: foundOrder });
+}
+
+// handler for deleting an order
+function destroy(req, res) {
+  const index = orders.findIndex((order) => order.id === res.locals.order.id);
+  if (index > -1) {
+    orders.splice(index, 1);
+  }
+  res.sendStatus(204);
+}
+
+
 // middleware for checking if there is a delivery location for order
 function bodyHasDeliverProp(req, res, next) {
   const { data: { deliverTo } = {} } = req.body;
@@ -144,56 +195,6 @@ function dataIdMatchesOrderId(req, res, next) {
   }
 
   return next();
-}
-
-// ROUTE HANDLERS
-
-// handler for listing the all of the orders
-function list(req, res) {
-  res.json({ data: orders });
-}
-
-// handler for reading the orders
-function read(req, res) {
-  const orderId = req.params.orderId;
-  const matchingOrder = orders.find((order) => order.id === orderId);
-  res.json({ data: matchingOrder });
-}
-
-// handler for making a new order
-function create(req, res) {
-//   const { data: { deliverTo, mobileNumber, dishes } = {} } = req.body;
-  const newOrder = {
-    id: nextId(),
-    deliverTo: res.locals.deliverTo,
-    mobileNumber: res.locals.mobileNumber,
-    status: "out-for-delivery",
-    dishes: res.locals.dishes,
-  };
-  orders.push(newOrder);
-  res.status(201).json({ data: newOrder });
-}
-
-// handler for updating an order
-function update(req, res) {
-  const { data: { deliverTo, mobileNumber, dishes } = {} } = req.body;
-  const orderId = req.params.orderId;
-  const foundOrder = orders.find((order) => order.id === orderId);
-
-  foundOrder.deliverTo = deliverTo;
-  foundOrder.mobileNumber = mobileNumber;
-  foundOrder.dishes = dishes;
-
-  res.json({ data: foundOrder });
-}
-
-// handler for deleting an order
-function destroy(req, res) {
-  const index = orders.findIndex((order) => order.id === res.locals.order.id);
-  if (index > -1) {
-    orders.splice(index, 1);
-  }
-  res.sendStatus(204);
 }
 
 module.exports = {

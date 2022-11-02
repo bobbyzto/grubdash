@@ -1,5 +1,4 @@
 # GrubDash API
-
 This is a RESTFUL API server for a food delivery service app called GrubDash.
 The frontend for this application can be found here: [GrubDash](https://github.com/bobbyzto/starter-grub-dash-front-end)
 
